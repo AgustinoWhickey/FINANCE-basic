@@ -52,7 +52,6 @@ class Laporan extends CI_Controller
 	$pengeluaran = '';
 	$pemasukan = '';
 	$monthly = '';
-	$all_data = '';
 	$data_pengeluaran = $this->dmod->monthly_chart_get_out();
 	foreach($data_pengeluaran as $row){
 		$month = date("m-Y",strtotime($row["date"]));
@@ -71,12 +70,22 @@ class Laporan extends CI_Controller
 	}
 	$pemasukan = substr($pemasukan, 0, -2);
 	
+	$data_monthly = $this->dmod->monthly_chart();
+	foreach($data_monthly as $row){
+		$month = date("m-Y",strtotime($row["date"]));
+		$monthly.= "{ month:'".$month."',
+					pengeluaran:'".$row["tot_pengeluaran"]."',
+					pemasukan:'".$row["tot_pemasukan"]."'}, ";
+	}
+	$monthly = substr($monthly, 0, -2);
+	
     $data = array(
       'title' => $identitas['title'],
       'page' => 'Grafik Bulanan',
       'user' => $this->aauth->get_user(),
       'pengeluaran' => $pengeluaran,
-      'pemasukan' => $pemasukan
+      'pemasukan' => $pemasukan,
+      'monthly' => $monthly
     );
     $this->load->view('lib/header', $data);
     $this->load->view('monthly_chart', $data);
