@@ -45,6 +45,43 @@ class Laporan extends CI_Controller
     $this->load->view('view_chart', $data);
     $this->load->view('lib/footer', $data);
   }
+  
+  public function monthly()
+  {
+    $identitas = $this->web->identitas();
+	$pengeluaran = '';
+	$pemasukan = '';
+	$monthly = '';
+	$all_data = '';
+	$data_pengeluaran = $this->dmod->monthly_chart_get_out();
+	foreach($data_pengeluaran as $row){
+		$month = date("m-Y",strtotime($row["date"]));
+		$pengeluaran .= "{ amount:'".$row["amount"]."',
+					date:'".$month."',
+					bulan:'".$row["Month"]."'}, ";
+	}
+	$pengeluaran = substr($pengeluaran, 0, -2);
+	
+	$data_pemasukan = $this->dmod->monthly_chart_get_in();
+	foreach($data_pemasukan as $row){
+		$month = date("m-Y",strtotime($row["date"]));
+		$pemasukan.= "{ amount:'".$row["amount"]."',
+					date:'".$month."',
+					bulan:'".$row["Month"]."'}, ";
+	}
+	$pemasukan = substr($pemasukan, 0, -2);
+	
+    $data = array(
+      'title' => $identitas['title'],
+      'page' => 'Grafik Bulanan',
+      'user' => $this->aauth->get_user(),
+      'pengeluaran' => $pengeluaran,
+      'pemasukan' => $pemasukan
+    );
+    $this->load->view('lib/header', $data);
+    $this->load->view('monthly_chart', $data);
+    $this->load->view('lib/footer', $data);
+  }
 }
 
 

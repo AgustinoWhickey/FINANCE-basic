@@ -327,6 +327,14 @@ class Data_model extends CI_Model
     {
         return $result = $this->db->select('date,SUM(amount_transaction) as total,type as tipe')->where('type', 'pemasukan')->like('date', $date)->get('transaction')->result_array();
     }
+	public function monthly_chart_get_out()
+    {
+		return $result = $this->db->select('DISTINCT CONCAT(MONTH(date)) as Month, date, SUM(amount_transaction) as amount')->where('type', 'pengeluaran')->group_by('Month')->get('transaction')->result_array();
+    }
+    public function monthly_chart_get_in()
+    {
+        return $result = $this->db->select('DISTINCT CONCAT(MONTH(date)) as Month, date, SUM(amount_transaction) as amount')->where('type', 'pemasukan')->group_by('Month')->get('transaction')->result_array();
+    }
     public function datausers($i)
     {
         return $this->db->get_where('aauth_users', ['id' => $i])->row_array();
